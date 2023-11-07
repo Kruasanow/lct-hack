@@ -1,0 +1,54 @@
+
+.container {
+    display: flex;
+}
+
+.small {
+    flex: 1;
+    background-color: lightblue;
+    padding: 10px;
+}
+
+.large {
+    flex: 3;
+    background-color: lightgreen;
+    padding: 10px;
+    display: flex; /* Горизонтальный flex-контейнер */
+}
+
+.left-small {
+    flex: 1;
+    background-color: lightgray;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+label {
+    display: block; /* Поместить каждый лейбл на отдельной строке */
+}
+
+input, select {
+    width: 100%; /* Растянуть поля ввода и селекторы по ширине дива */
+}
+
+.output-container {
+    width: 100%;
+    padding: 10px;
+    max-height: 100px; /* Максимальная высота контейнера, где значения будут скроллерымыми */
+    overflow-y: auto; /* Добавление вертикального скролла при необходимости */
+}
+
+.output-value {
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    max-height: 50px; /* Фиксированная высота для .output-value */
+    overflow-y: auto; /* Добавление вертикального скролла, если содержимое больше */
+}
+
+.add-button {
+    cursor: pointer;
+    font-size: 24px;
+}

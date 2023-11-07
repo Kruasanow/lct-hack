@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <form action="/" method="POST">
+        <input type="hidden" name="resArr" id="resArr">
+        <div class="container">
+            <div class="small">
+                <label for="taskname">Наименование задачи:</label>
+                <input type="text" id="taskname" name="taskname">
+            </div>
+            <div class="small">
+                <label for="prioritySelect">Приоритет:</label>
+                <select id="prioritySelect" name="prioritySelect">
+                    <option value="средний">Средний</option>
+                    <option value="высокий">Высокий</option>
+                    <option value="низкий">Низкий</option>
+                </select>
+            </div>
+            <div class="large">
+                
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton">"И"</span>
+                    </div>
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton1">"ИЛИ"</span>
+                    </div>
+                    <div class="small">
+                        <label for="InputedData">Inputed Data:</label>
+                        <select id="InputedData" name="InputedData">
+                            <option value="DATA1">Data1</option>
+                            <option value="DATA2">Data2</option>
+                            <option value="DATA3">Data3</option>
+                        </select>
+                    </div>
+                    <div class="small">
+                        <label for="Operators">Operators:</label>
+                        <select id="Operators" name="Operators">
+                            <option value=">">></option>
+                            <option value="=">=</option>
+                            <option value="<"><</option>
+                        </select>
+                    </div>
+                    <div class="small">
+                        <label for="curvalue">Значение:</label>
+                        <input type="text" id="curvalue" name="curvalue">
+                    </div>
+                    <div class="output-container" id="outputValues" name="data">
+                        <!-- Здесь будут выводиться значения полей -->
+                    </div>     
+            </div>
+            <div class="small">
+                <label>Уровень:</label>
+                <input type="checkbox" id="senior" name="levels" value="Сеньёр">
+                <label for="senior">Сеньёр</label>
+            
+                <input type="checkbox" id="middle" name="levels" value="Мидл">
+                <label for="middle">Мидл</label>
+            
+                <input type="checkbox" id="junior" name="levels" value="Джун">
+                <label for="junior">Джун</label>
+            </div>            
+            
+        </div>
+        <input type="submit" value="Отправить">
+    </form>
+    {{ entered_values }}
+</body>
+</html>
