@@ -1,54 +1,110 @@
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
 
-.container {
-    display: flex;
-}
+        h1 {
+            background-color: red;
+            color: white;
+            border-radius: 4px;
+        }
 
-.small {
-    flex: 1;
-    background-color: lightblue;
-    padding: 10px;
-}
+        form {
+            display: flex;
+            flex-direction: column;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: border-radius 0.5s ease-in-out;
+        }
 
-.large {
-    flex: 3;
-    background-color: lightgreen;
-    padding: 10px;
-    display: flex; /* Горизонтальный flex-контейнер */
-}
+        .row {
+            display: flex;
+            margin-bottom: 10px; /* промежуток между строками */
+        }
 
-.left-small {
-    flex: 1;
-    background-color: lightgray;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-}
+        .small, .large {
+            flex: 1;
+            padding: 10px;
+        }
 
-label {
-    display: block; /* Поместить каждый лейбл на отдельной строке */
-}
+        .large {
+            display: flex;
+            justify-content: space-between;
+        }
 
-input, select {
-    width: 100%; /* Растянуть поля ввода и селекторы по ширине дива */
-}
+        .container {
+            padding: 20px;
+        }
 
-.output-container {
-    width: 100%;
-    padding: 10px;
-    max-height: 100px; /* Максимальная высота контейнера, где значения будут скроллерымыми */
-    overflow-y: auto; /* Добавление вертикального скролла при необходимости */
-}
+        .small {
+            flex: 1;
+            padding: 10px;
+        }
 
-.output-value {
-    margin: 10px 0;
-    padding: 5px;
-    border: 1px solid #ccc;
-    background-color: #f9f9f9;
-    max-height: 50px; /* Фиксированная высота для .output-value */
-    overflow-y: auto; /* Добавление вертикального скролла, если содержимое больше */
-}
+        .large {
+            flex: 3;
+            padding: 10px;
+            display: flex;
+        }
 
-.add-button {
-    cursor: pointer;
-    font-size: 24px;
-}
+        .left-small {
+            flex: 1;
+            /* background-color: lightgray; */
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        label {
+            display: block;
+        }
+
+        input, select {
+            width: 100%;
+            background-color: #fcf4f4;
+            border-radius: 4px;
+        }
+
+        .output-container {
+            width: 100%;
+            padding: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .output-value {
+            border-radius: 4px;
+            margin: 10px 0;
+            padding: 5px;
+            border: 1px solid #ccc;
+            background-color: #fcf4f4;
+            max-height: 50px;
+            overflow-y: auto;
+        }
+
+        .add-button {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        /* Кнопки с красным фоном и белым текстом */
+        .red-button, .add-button {
+            background-color: red;
+            color: white;
+            margin-top: 10px; /* отступ от нижней границы формы */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-button {
+            margin-left: 10px; /* промежуток между кнопками И и ИЛИ */
+        }
+        
