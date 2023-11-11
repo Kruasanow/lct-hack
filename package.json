@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "jquery-schedule": "^2.2.0"
+  }
+}

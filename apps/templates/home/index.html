@@ -1,0 +1,149 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+  body {
+      overflow: hidden;
+  }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <div class="container-fluid py-4">
+      <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">weekend</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0">Количество пользователей</p>
+                <h4 class="mb-0">{{ user_count }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">person</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0">Количество сотрудников</p>
+                <h4 class="mb-0">{{ worker_count }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">assignment</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0">Количество типов задач</p>
+                <h4 class="mb-0">{{ tasks_count }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="card">
+            <div class="card-header p-3 pt-2">
+              <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                <i class="material-icons opacity-10">weekend</i>
+              </div>
+              <div class="text-end pt-1">
+                <p class="text-sm mb-0">Всего задач</p>
+                <h4 class="mb-0">{{ full_tasks_count }}</h4>
+              </div>
+            </div>
+            <hr class="dark horizontal my-0">
+          </div>
+        </div>
+      </div>
+      
+      <div class="container-fluid py-4">
+        <div class="row min-vh-10 h-10">
+            <div class="col-12">
+              <div class="chart-container mx-auto" style="position: relative; height:500px; width:100%;">
+                    <h3>Количество задач на день</h3>
+                    <div class="chart-container">
+                        <canvas id="tasksChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+{% endblock content %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        var ctx = document.getElementById('tasksChart').getContext('2d');
+        var data = {
+            labels: [
+                {% for date, _ in tasks_per_day %}
+                    '{{ date }}',
+                {% endfor %}
+            ],
+            datasets: [{
+                label: '',
+                data: [
+                    {% for _, count in tasks_per_day %}
+                        {{ count }},
+                    {% endfor %}
+                ],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        };
+        var config = {
+            type: 'bar',
+            data: data,
+            options: {
+                scales: {
+                    x: {
+                        type: 'category',  // Используем тип 'category' для меток дат
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false, // Hide the legend
+                    }
+                }
+            }
+        };
+        var myChart = new Chart(ctx, config);
+
+        // Toggle bars display on label click
+        document.querySelector('.chart-container h3').addEventListener('click', function() {
+            myChart.data.datasets[0].hidden = !myChart.data.datasets[0].hidden;
+            myChart.update();
+        });
+    });
+</script>
+{% endblock javascripts %}
+

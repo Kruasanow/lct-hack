@@ -1,0 +1,87 @@
+{% extends "layouts/base.html" %}
+{% block title %} Создание нового пользователя {% endblock %} 
+{% block stylesheets %}
+<style>
+  .bg-gradient-primary {
+      background: #ff4b5f !important;
+  }
+  
+  .text-primary {
+      color: #ff4b5f !important;
+  }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<section>
+  <div class="page-header min-vh-100">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-auto">
+          <div class="card card-plain">
+            <div class="card-header">
+              <h4 class="font-weight-bolder text-center">
+                Создание нового пользователя
+              </h4>
+              <p class="mb-0 text-center">
+                {% if msg %}
+                  <span class="text-danger">{{ msg | safe }}</span>
+                {% else %}
+                  Введите роль и пароль для регистрации нового пользователя
+                {% endif %}
+              </p>
+            </div>
+            {% if success %}
+              <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                
+                <p class="mb-2 text-sm mx-auto text-center">
+                  <a  href="{{ url_for('home_blueprint.index') }}"
+                      class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Вернуться на главную страницу</a>
+                </p>
+              </div>
+            {% else %}
+              <!-- Ваш код формы регистрации -->
+    
+
+              <div class="card-body">
+                <form role="form" method="post" action="">
+                  {{ form.hidden_tag() }} 
+                  <div class="input-group input-group-outline mb-3">
+                    {{ form.username(class="form-control", placeholder="Имя пользователя") }}
+                  </div>
+                  <div class="input-group input-group-outline mb-3">
+                    <select name="role" class="form-control">
+                      <option value="Пользователь">Пользователь</option>
+                      <option value="Администратор">Администратор</option>
+                    </select>
+                  </div>
+
+                  <div class="input-group input-group-outline mb-3">
+                    <select name="worker_FIO" class="form-control">
+                      {% for worker in fio_column %}
+                      <option>{{ worker }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="input-group input-group-outline mb-3">
+                    {{ form.password(class="form-control", type="password", placeholder="Пароль") }}
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" name="register" 
+                            class="btn btn-lg bg-gradient-primary btn-lg w-100 mt-4 mb-0">Создать</button>
+                  </div>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/gantt-schedule-timeline-calendar/dist/gstc.wasm.umd.min.js"></script>
+{% endblock javascripts %}

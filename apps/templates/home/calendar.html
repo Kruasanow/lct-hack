@@ -1,0 +1,130 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Календарь {% endblock %} 
+
+{% block stylesheets %}
+<style>
+#dateDropdown {
+    background-color: white;
+    color: #7b809a; /* Цвет текста внутри селекта */
+    border: 1px solid #ff4b5f; /* Цвет обводки */
+    border-radius: 8px; /* Радиус скругления краев */
+    text-align-last: center; /* Выравнивание текста по центру */
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+
+
+<div class="container-fluid py-4">
+    <div class="row">
+      <div class="col">
+        <label for="dateDropdown" class="form-label"><h5>Выберите дату</h5></label>
+        <select class="form-select" id="dateDropdown" name="selectedDate" style="background-color: white; border: 1px solid #ff4b5f; border-radius: 5px;">
+            {% for date in schedule %}
+                <option value="{{ date }}">{{ date }}</option>
+            {% endfor %}
+        </select>        
+      </div>
+    </div>
+  </div>
+            <div class="container-fluid py-4">
+                <div class="row">
+<div class="container-fluid" id="contentContainer">
+</div>
+</div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var dateDropdown = document.getElementById('dateDropdown');
+        var contentContainer = document.getElementById('contentContainer');
+
+        dateDropdown.addEventListener('change', function () {
+            var selectedDate = dateDropdown.value;
+
+            axios.get(`/endpoint?date=${selectedDate}`)
+                .then(function (response) {
+                    clearTables();
+                    addTables(response.data);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+        });
+
+        // При загрузке страницы показываем таблицы для первой даты
+        showTablesForInitialDate();
+
+        function showTablesForInitialDate() {
+            var initialDate = dateDropdown.options[0].value;
+
+            axios.get(`/endpoint?date=${initialDate}`)
+                .then(function (response) {
+                    addTables(response.data);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                });
+        }
+
+        function addTables(data) {
+            for (var workerData of data) {
+                var intervals = workerData['intervals'];
+
+                var workerContainer = document.createElement('div');
+                workerContainer.className = 'container-fluid py-4';
+                workerContainer.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-12 mx-auto">
+                            <div class="card my-4">
+                                <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                                    <div class="bg-gradient-primary shadow-success border-radius-lg pt-4 pb-3">
+                                        <h6 class="text-white text-capitalize ps-3">${workerData['worker']}</h6>
+                                    </div>
+                                </div>
+                                <div class="card-body px-0 pb-2">
+                                    <div class="table-responsive p-0">
+                                        <table class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">Интервал времени</th>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Название задачи</th>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Адрес</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${intervals ? 
+                                                    Object.entries(intervals).map(([interval, item]) => `
+                                                        <tr>
+                                                            <td style="text-align: left; padding-left: 23px;">${interval}</td>
+                                                            <td style="padding-right: 20px;">${item.task_title}</td>
+                                                            <td style="padding-right: 20px;">${item.point_address}</td>
+                                                        </tr>
+                                                    `).join('') :
+                                                    '<tr><td colspan="5" style="text-align: center;">Нет доступных интервалов</td></tr>'
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                contentContainer.appendChild(workerContainer);
+            }
+        }
+
+        function clearTables() {
+            contentContainer.innerHTML = '';
+        }
+    });
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,741 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Задачи {% endblock %} 
+
+{% block stylesheets %}
+<style>
+  /* body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        } */
+
+  /* h1 {
+      background-color: #FF4B5F;
+      color: white;
+      border-radius: 4px;
+  } */
+
+  form {
+      display: flex;
+      flex-direction: column;
+      border-radius: 15px;
+      overflow: hidden;
+      /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
+      transition: border-radius 0.5s ease-in-out;
+  }
+
+  .row {
+      display: flex;
+      margin-bottom: 10px; /* промежуток между строками */
+  }
+
+  .small, .large {
+      flex: 1;
+      padding: 10px;
+  }
+
+  .large {
+      display: flex;
+      justify-content: space-between;
+  }
+
+  .container {
+      padding: 20px;
+  }
+
+  .small {
+      flex: 1;
+      padding: 10px;
+  }
+
+  .large {
+      flex: 3;
+      padding: 10px;
+      display: flex;
+  }
+
+  .left-small {
+      flex: 1;
+      /* background-color: lightgray; */
+      padding: 10px;
+      display: flex;
+      align-items: center;
+  }
+
+  label {
+      display: block;
+  }
+
+  input, select {
+      width: 100%;
+      background-color: #fcf4f4;
+      border-radius: 4px;
+  }
+
+  .output-container {
+      width: 100%;
+      padding: 10px;
+      max-height: 100px;
+      overflow-y: auto;
+  }
+
+  .output-value {
+      border-radius: 4px;
+      margin: 10px 0;
+      padding: 5px;
+      border: 1px solid #ccc;
+      background-color: #fcf4f4;
+      max-height: 50px;
+      overflow-y: auto;
+  }
+
+  .add-button {
+      cursor: pointer;
+      /* font-size: 24px; */
+  }
+
+  /* Кнопки с красным фоном и белым текстом */
+  .red-button, .add-button {
+      background-color: #FF4B5F;
+      color: white;
+      margin-top: 10px; /* отступ от нижней границы формы */
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+  }
+
+  .add-button {
+      margin-left: 10px; /* промежуток между кнопками И и ИЛИ */
+  }
+
+  .position-fixed {
+    top: 1rem;
+    right: 1rem;
+  }
+  .limited-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 5px; /* Измените это значение на ваше усмотрение */
+    cursor: pointer;
+  }
+
+  
+  .small.levels-container {
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.small.levels-container label {
+    font-size: 1rem; /* Adjust font size as needed */
+    margin-bottom: 8px;
+    width: 100px; /* Set a fixed width for consistent spacing */
+}
+
+.small.levels-container div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px; /* Reduced margin between checkbox and label */
+}
+
+.small.levels-container input[type="checkbox"] {
+    margin-right: 5px; /* Reduced margin between checkbox and label */
+}
+
+/* Use Materialize classes for styling checkboxes and labels */
+.small.levels-container input[type="checkbox"]:checked+label:after,
+.small.levels-container input[type="checkbox"].filled-in:checked+label:after {
+    border: 2px solid #2196F3; /* Adjust the color as needed */
+    background-color: #2196F3; /* Adjust the color as needed */
+}
+
+.small.levels-container input[type="checkbox"]:checked+label:after,
+.small.levels-container input[type="checkbox"].filled-in:checked+label:after {
+    border-radius: 3px; /* Ensure rounded corners for checked state */
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 3%;
+}
+
+.button-container a {
+    order: -1;
+    margin-left: 3%;
+}
+
+.button-container button {
+    margin-left: 10%;
+}
+
+    </style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="button-container">
+    <a href="#" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#addRowModal" style="background-color: #ff4b5f; color: white">
+        Добавить задачу
+    </a>
+        <button type="button" class="btn btn-info mt-3" style="background-color: #133d7e; color: white" onclick="checkTasks()">Проверить задачи для пунктов</button>
+    <button type="button" class="btn btn-success mt-3" style="background-color: #217e1e; color: white" onclick="distributeTasks()">Распределить задачи</button>
+</div>
+    <div id="addRowModal" class="modal fade">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <form id="addRowForm">
+                      <label for="newbilling">Название задачи:</label>
+                      <input type="text" id="newbilling" name="newbilling" class="form-control" required>
+                      <label for="newdata">Дата выполнения:</label>
+                      <input type="text" id="newdata" name="newdata" class="form-control" required>
+                      <button type="submit" class="btn btn-primary mt-3" style="background-color: #ff4b5f; color: white">Добавить</button>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+
+
+  <div class="col-md-6 col-6 mx-auto" style="width: 96%;">
+    <div class="card">
+    <div class="card-header mx-4 p-3 text-center">
+    <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg" style="width: 100%;">
+      <div class="bg-gradient-primary shadow-success border-radius-lg pt-4 pb-3">
+        <h6 class="text-white ps-3">Конструктор задач</h6>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="col-md-12">
+    <div class="card my-4">
+      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+    
+      </div>
+
+
+
+        <form action="/billing.html" method="POST">
+          <div class="container">
+            <div class="row">
+                <div class="small">
+                    <label for="taskname">Наименование задачи:</label>
+                    <input type="text" id="taskname" name="taskname">
+                </div>
+                <div class="small">
+                    <label for="prioritySelect">Приоритет:</label>
+                    <select id="prioritySelect" name="prioritySelect">
+                        <option value="низкий">Низкий</option>
+                        <option value="средний">Средний</option>
+                        <option value="высокий">Высокий</option>
+                    </select>
+                </div>
+                <div class="small">
+                    <label for="dlit">Длительность:</label>
+                    <input type="text" id="dlit" name="dlit">
+                </div>
+                <div class="small levels-container">
+                    <label>Уровень:</label>
+                    <div>
+                        <input type="checkbox" id="senior" name="levels" value="синьор">
+                        <label for="senior">Синьор</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="middle" name="levels" value="мидл">
+                        <label for="middle">Мидл</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="junior" name="levels" value="джун">
+                        <label for="junior">Джун</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large">
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton2">Объединение</span>
+                    </div>
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton">Логическое &</span>
+                    </div>
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton1">Логическое | </span>
+                    </div>
+                    <div class="small">
+                        <label for="InputedData">Вводимые данные:</label>
+                        <select id="InputedData" name="InputedData">
+                            <option value="Points.id">Номер</option>
+                            <option value="Points.address">Адрес</option>
+                            <option value="Points.connected">Когда подключена точка?</option>
+                            <option value="Points.delivered">Карты и материалы доставлены?</option>
+                            <option value="Points.days_last_card">Количество дней после выдачи последней карты</option>
+                            <option value="Points.num_approved_app AS FLOAT">Количество одобренных заявок</option>
+                            <option value="Points.num_card AS FLOAT">Количество выданных карт</option>
+                        </select>
+                    </div>
+                    <div class="small">
+                        <label for="Operators">Оператор:</label>
+                        <select id="Operators" name="Operators">
+                            <option value=">">Больше</option>
+                            <option value="==">Равно</option>
+                            <option value="<">Меньше</option>
+                            <option value="!=">Не равно</option>
+                            <option value="<=">Меньше или Равно</option>
+                            <option value=">=">Больше или Равно</option>
+                        </select>
+                    </div>
+                    <div class="small">
+                        <label for="curvalue">Значение:</label>
+                        <input type="text" id="curvalue" name="curvalue">
+                    </div>
+                </div>
+            </div>        
+            <input type="hidden" id="resArr" name="resArr" value=""> 
+            <input type="submit" value="Отправить" class="red-button">
+            <div class="row">
+                <div class="output-container" id="outputValues" name="data">
+                    <!-- Здесь будут выводиться значения полей -->
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- {{entered_values}} -->
+                </div>
+              </div>
+
+
+  <div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white ps-3">Справочник задач</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">Тип</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Название</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Приоритет</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Время выполнения</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Условия</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Уровень сотрудника</th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for task in tasks %}
+                <tr>
+                  <td  contenteditable="false" data-name="type" style="text-align: left; padding-left: 23px;">{{ task.type }}</td>
+                  <td contenteditable="false" data-name="title">{{ task.title }}</td>
+                  <td contenteditable="false" data-name="priority">{{ task.priority }}</td>
+                  <td contenteditable="false" data-name="lead_time">{{ task.lead_time }}</td>
+                  <td class="limited-text" contenteditable="false" data-name="condition">{{ task.condition }}</td>
+                  <td class="limited-text" contenteditable="false" data-name="level">{{ task.level }}</td>
+                  <td class="align-middle">
+                    <a href="javascript:;" class="text-warning font-weight-bold text-xs bg-button edit-button" data-username="{{ task.type }}" data-toggle="tooltip" data-original-title="Изменить">
+                      Изменить
+                    </a>
+                    <a href="javascript:;" class="text-danger font-weight-bold text-xs bg-button delete-button" style="text-align: left; padding-left: 23px;" data-username="{{ task.type }}" data-toggle="tooltip" data-original-title="Удалить">
+                      Удалить
+                    </a>
+                    <a href="javascript:;" class="text-success font-weight-bold text-xs bg-button save-button ms-4" data-username="{{ task.type }}" data-toggle="tooltip" data-original-title="Сохранить">
+                      Сохранить
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-12">
+        <div class="card my-4">
+          <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+              <h6 class="text-white ps-3">Все задачи</h6>
+            </div>
+          </div>
+          <div class="card-body px-0 pb-2">
+            <div class="table-responsive p-0">
+              <table class="table align-items-center mb-0">
+                <thead>
+                  <tr>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">ФИО</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Название задачи</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Приоритет</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Время выполнения</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Адрес</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Статус</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Комментарии</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for full_task in full_tasks %}
+                  <tr>
+                    <td class="limited-text" contenteditable="false" data-name="fio" style="text-align: left; padding-left: 23px;">{{ full_task.fio }}</td>
+                    <td class="limited-text" contenteditable="false" data-name="task_title">{{ full_task.task_title }}</td>
+                    <td contenteditable="false" data-name="task_priority">{{ full_task.task_priority }}</td>
+                    <td contenteditable="false" data-name="task_lead_time">{{ full_task.task_lead_time }}</td>
+                    <td contenteditable="false" data-name="point_address">{{ full_task.point_address }}</td>
+                    <td contenteditable="false" data-name="task_status">{{ full_task.task_status }}</td>
+                    <td class="limited-text" contenteditable="false" data-name="task_comment">{{ full_task.task_comment }}</td>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <div class="position-fixed bottom-1 end-1 z-index-2">
+    <div class="toast fade hide p-2 mt-2 bg-white" role="alert" aria-live="assertive" id="customToast" aria-atomic="true">
+        <div class="toast-header border-0">
+            <i class="material-icons text-danger me-2"></i>
+            <span class="me-auto text-gradient text-danger font-weight-bold">Уведомление</span>
+            <small class="text-body" id="toastTimestamp"></small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+        </div>
+        <hr class="horizontal dark m-0">
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}
+
+
+{% block javascripts %}
+    <script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    const addValueButton = document.getElementById('addValueButton');
+    const addValueButton1 = document.getElementById('addValueButton1');
+    const addValueButton2 = document.getElementById('addValueButton2');
+    const outputValues = document.getElementById('outputValues');
+    const enteredValues = new Set(); // Множество для хранения введенных значений
+
+    console.log(addValueButton); // Проверка наличия кнопки "Логическое &" в консоли
+    console.log(addValueButton1);
+    console.log(addValueButton2);
+
+    var resArr = []; // Создаем пустой массив для сохранения результатов
+    var schetchik_ebla = 0
+
+    function isEven(number) {
+        return number % 2 === 0;
+    }
+
+    function highlightButton(button, condition) {
+        if (condition) {
+            button.style.backgroundColor = 'green';
+        } else {
+            button.style.backgroundColor = 'red';
+        }
+    }
+
+    // Функция для обновления значения в скрытом поле формы
+    function updateHiddenInput() {
+        const hiddenInput = document.getElementById('resArr');
+        hiddenInput.value = JSON.stringify(resArr);
+    }
+
+    addValueButton.addEventListener('click', () => {
+        const checkOper = '&';
+        const InputedData = document.getElementById('InputedData').value;
+        const Operators = document.getElementById('Operators').value;
+        const curvalue = document.getElementById('curvalue').value;
+        console.log(checkOper)
+
+        // Проверка, что все значения не пусты
+        if (InputedData.trim() === '' || Operators.trim() === '' || curvalue.trim() === '') {
+            return;
+        }
+
+        const inputValue = `(${InputedData} ${Operators} ${curvalue} ${checkOper})`;
+
+        if (!enteredValues.has(inputValue)) {
+            enteredValues.add(inputValue);
+
+            const outputValueDiv = document.createElement('div');
+            outputValueDiv.classList.add('output-value');
+            outputValueDiv.textContent = inputValue;
+            outputValues.appendChild(outputValueDiv);
+
+            // Если количество элементов в .output-container больше 3, делаем его скроллером
+            if (outputValues.children.length > 3) {
+                outputValues.style.overflowY = 'scroll';
+            }
+
+            // Добавляем значение в resArr
+            resArr.push(inputValue);
+            console.log(resArr); // Выводим resArr в консоль после каждого добавления
+        }
+        updateHiddenInput();
+    });
+
+    addValueButton1.addEventListener('click', () => {
+        const checkOper = '|';
+        const InputedData = document.getElementById('InputedData').value;
+        const Operators = document.getElementById('Operators').value;
+        const curvalue = document.getElementById('curvalue').value;
+
+        // Проверка, что все значения не пусты
+        if (InputedData.trim() === '' || Operators.trim() === '' || curvalue.trim() === '') {
+            return;
+        }
+
+        const inputValue = `(${InputedData} ${Operators} ${curvalue} ${checkOper})`;
+
+        if (!enteredValues.has(inputValue)) {
+            enteredValues.add(inputValue);
+
+            const outputValueDiv = document.createElement('div');
+            outputValueDiv.classList.add('output-value');
+            outputValueDiv.textContent = inputValue;
+            outputValues.appendChild(outputValueDiv);
+
+            // Если количество элементов в .output-container больше 3, делаем его скроллером
+            if (outputValues.children.length > 3) {
+                outputValues.style.overflowY = 'scroll';
+            }
+
+            // Добавляем значение в resArr
+            resArr.push(inputValue);
+            console.log(resArr); // Выводим resArr в консоль после каждого добавления
+        }
+        updateHiddenInput();
+    });
+
+    addValueButton2.addEventListener('click', () => {
+        if (isEven(schetchik_ebla)) {
+            resArr.push('(');
+            highlightButton(addValueButton2, true);
+        } else {
+            resArr.push(')');
+            console.log(resArr);
+            highlightButton(addValueButton2, false);
+        }
+        schetchik_ebla++;
+
+        updateHiddenInput();
+    });
+
+    updateHiddenInput();
+});
+
+
+  document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('edit-button')) {
+        const editButton = event.target;
+        const row = editButton.closest('tr');
+
+        row.querySelectorAll('[contenteditable="false"]').forEach(cell => {
+            const dataName = cell.getAttribute('data-name');
+            if (dataName !== 'type') {
+                cell.contentEditable = 'true';
+            }
+        });
+    } else if (event.target.classList.contains('delete-button')) {
+        const type = event.target.getAttribute('data-username');
+        const row = event.target.closest('tr');
+
+        fetch(`/delete_task/${type}`, {
+            method: 'POST',
+        })
+        .then(response => {
+            if (response.status === 200) {
+                row.remove(); 
+                showToast('success', 'Задача успешно удалена');
+            } else {
+                showToast('danger', 'Произошла ошибка при удалении задачи');
+            }
+        });
+    } else if (event.target.classList.contains('save-button')) {
+        const type = event.target.getAttribute('data-username');
+        const row = event.target.closest('tr');
+        
+        // Получите данные, которые нужно сохранить, из ряда
+        const updatedTitle = row.querySelector('[data-name="title"]').textContent;
+        const updatedPriority = row.querySelector('[data-name="priority"]').textContent;
+        const updatedLeadTime = row.querySelector('[data-name="lead_time"]').textContent;
+        const updatedCondition = row.querySelector('[data-name="condition"]').textContent;
+        const updatedLevel = row.querySelector('[data-name="level"]').textContent;
+
+        const data = {
+            type: type,
+            title: updatedTitle,
+            priority: updatedPriority,
+            lead_time: updatedLeadTime,
+            condition: updatedCondition,
+            level: updatedLevel
+        };
+
+        fetch(`/update_task/${type}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.status === 200) {
+                showToast('success', 'Данные успешно сохранены');
+            } else {
+                showToast('danger', 'Произошла ошибка при сохранении данных');
+            }
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const addRowForm = document.getElementById('addRowForm');
+
+    addRowForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const newbilling = document.getElementById('newbilling').value;
+        const newdata= document.getElementById('newdata').value;
+
+
+        const data = {
+            billing: newbilling,
+            data: newdata,
+        };
+
+        fetch('/add_billing', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                const addRowModal = new bootstrap.Modal(document.getElementById('addRowModal'));
+                addRowModal.hide();
+                addRowForm.reset();
+
+                // Скрыть поле ввода новой строки
+                addRowForm.style.display = 'none';
+
+                // Дополнительные действия по обновлению данных на странице, если необходимо
+
+                showToast('success', 'Задача успешно добавлена');
+
+                location.reload();
+                showToast('success', 'Страница успешно перезагружена');
+            } else {
+                showToast('danger', 'Произошла ошибка при добавлении задачи: ' + result.msg);
+            }
+        });
+    });
+});
+
+async function checkTasks() {
+    try {
+        const response = await fetch('/init_task', {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Задачи сформированы и готовы к распределению');
+            } else {
+                showToast('danger', 'Нет задач для агентских точек');
+            }
+        } else {
+            showToast('danger', 'Произошла ошибка при обращении к серверу');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('danger', 'Произошла ошибка при обращении к серверу');
+    }
+}
+async function distributeTasks() {
+    try {
+        const response = await fetch('/distr_task', {
+            method: 'POST',
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Задачи распределены между сотрудниками');
+            } else {
+                showToast('danger', 'Нет задач для распределения');
+            }
+        } else {
+            showToast('danger', 'Произошла ошибка при обращении к серверу');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('danger', 'Произошла ошибка при обращении к серверу');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Обработчик события для отображения полного текста при наведении
+  document.querySelectorAll('.limited-text').forEach(function (cell) {
+    cell.addEventListener('mouseover', function () {
+      this.style.whiteSpace = 'normal';
+      this.style.overflow = 'visible';
+      this.style.maxWidth = 'none';
+    });
+
+    cell.addEventListener('mouseout', function () {
+      this.style.whiteSpace = 'nowrap';
+      this.style.overflow = 'hidden';
+      this.style.textOverflow = 'ellipsis';
+      this.style.maxWidth = '150px'; // Измените это значение на ваше усмотрение
+    });
+  });
+});
+function showToast(type, message) {
+  const toast = document.getElementById('customToast');
+  toast.querySelector('.toast-body').innerHTML = message;
+  const timestamp = new Date().toLocaleTimeString();
+  toast.querySelector('#toastTimestamp').innerText = timestamp;
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+}
+
+const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    setTimeout(() => {
+        bsToast.hide();
+    }, 5000);
+
+</script>
+
+{% endblock javascripts %}

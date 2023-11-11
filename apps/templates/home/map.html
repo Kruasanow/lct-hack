@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Карта {% endblock %}
+
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+    <body>
+        <div id="map" class="map" style="width: 99%; height: 600px;"></div>
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=e3d4b36e-4a55-4e7f-89b3-47d2237ff587&lang=ru_RU" type="text/javascript"></script>
+        <script>
+            ymaps.ready(init);
+
+            function init() {
+                var myMap = new ymaps.Map('map', {
+                    center: [45.035470, 38.975313],
+                    zoom: 10
+                });
+
+                // Coordinates and labels
+                var locations = [
+                    { coordinates: [45.044960, 38.977047], label: 'Дерягин Никита Владимирович' },
+                    { coordinates: [45.044960, 38.977047], label: 'Петрошев Валерий Павлович' },
+                    { coordinates: [45.044960, 38.977047], label: 'Евдокимов Давид Тихонович' },
+                    { coordinates: [45.012835, 39.071711], label: 'Андреев Гордий Данилович' },
+                    { coordinates: [45.012835, 39.071711], label: 'Иванов Адам Федорович' },
+                    { coordinates: [45.012835, 39.071711], label: 'Бобылёв Ипполит Альбертович' },
+                    { coordinates: [45.053773, 38.941986], label: 'Беляева Евгения Антоновна' },
+                    { coordinates: [45.053773, 38.941986], label: 'Николаев Азарий Платонович' }
+                ];
+
+                locations.forEach(location => {
+                    var coordinates = location.coordinates;
+                    var placemark = new ymaps.Placemark(coordinates, {
+                        hintContent: location.label,
+                        balloonContent: 'Это ' + location.label
+                    });
+
+                    myMap.geoObjects.add(placemark);
+                });
+            }
+        </script>
+    </body>
+{% endblock content %}
+
+{% block javascripts %}
+
+{% endblock javascripts %}

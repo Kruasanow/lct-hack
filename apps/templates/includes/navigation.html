@@ -1,0 +1,92 @@
+<nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+  <div class="container-fluid py-1 px-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Страницы</a></li>
+        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">
+          <span id="currentPageTitle">Дашборд</span>
+        </li>
+      </ol>
+    </nav>
+    <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+      <ul class="navbar-nav ms-auto justify-content-end"> 
+        <li class="nav-item d-flex align-items-center">
+          <a href="{{ url_for('authentication_blueprint.logout') }}" class="nav-link text-body font-weight-bold px-0">
+            <i class="fa fa-sign-out me-sm-1"></i>
+            <span class="d-sm-inline d-none">Выйти</span>
+          </a>
+        </li>
+        <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </a>
+        </li>
+        <li class="nav-item px-1 d-flex align-items-center">
+        </li>
+        <li class="nav-item dropdown pe-2 d-flex align-items-center">
+          <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-bell cursor-pointer"></i>
+          </a>
+          <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+            <li class="mb-2">
+              <a class="dropdown-item border-radius-md" href="javascript:;">
+                <div class="d-flex py-1">
+                  <div class="d-flex flex-column justify-content-center">
+                    <h6 class="text-sm font-weight-normal mb-1">
+                      <span class="font-weight-bold">Нет уведомлений</span> 
+                  </div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<script>
+  // Функция для обновления названия текущей страницы
+  function updateCurrentPageTitle() {
+    // Получить текущий путь страницы
+    
+    var currentPath = window.location.pathname;
+
+    var pageTitle = "Дашборд"; // Название страницы по умолчанию
+    
+    if (currentPath === "/tables.html") {
+      pageTitle = "Таблицы";
+    } else if (currentPath === "/billing.html") {
+      pageTitle = "Задачи";
+    } else if (currentPath === "/calendar.html") {
+      pageTitle = "Календарь";
+    } else if (currentPath === "/notifications.html") {
+      pageTitle = "Оповещения";
+    }
+    else if (currentPath === "/profile.html") {
+      pageTitle = "Профиль пользователя";
+    }
+    else if (currentPath === "/workers.html") {
+      pageTitle = "Таблицы / Сотрудники";
+    }
+    else if (currentPath === "/users.html") {
+      pageTitle = "Таблицы / Пользователи";
+    }
+    else if (currentPath === "/points.html") {
+      pageTitle = "Таблицы / Агентские точки";
+    }
+    else if (currentPath === "/register.html") {
+      pageTitle = "Создание нового пользователя";
+    }
+    
+
+    document.getElementById("currentPageTitle").textContent = pageTitle;
+  }
+
+  updateCurrentPageTitle();
+  
+</script>
+<!-- End Navbar -->

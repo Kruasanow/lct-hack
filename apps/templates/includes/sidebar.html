@@ -1,0 +1,95 @@
+<style>
+  .bg-gradient-primary {
+      background: #ff4b5f !important;
+      color: white;
+  }
+  #sidenav-scrollbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2; /* Установите более высокий z-index для слайд-бара */
+  }
+  .navbar-vertical {
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+</style>
+
+
+<aside class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 bg-white" id="sidenav-main" style="color: black;">
+  <div class="sidenav-header d-flex justify-content-center align-items-center">
+    <i class="fas fa-times p-3 cursor-pointer text-black opacity-5 position-absolute start-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
+    <img src="/static/assets/img/Frame.svg" class="navbar-brand-img mx-2" alt="main_logo" style="width: 100%; height: auto;">
+  </div>
+ 
+  <div class="collapse navbar-collapse w-auto max-height-vh-100" id="sidenav-collapse-main">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link {% if 'index' in segment %} active bg-gradient-primary {% endif %}" href="/" style="color: black;">
+          <div class="text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons text-black opacity-10">dashboard</i>
+          </div>
+          <span class="nav-link-text ms-1">Дашборд</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if 'tables' in segment %} active bg-gradient-primary {% endif %}" href="/tables.html" style="color: black;">
+          <div class="text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons text-black opacity-10">table_view</i>
+          </div>
+          <span class="nav-link-text ms-1">Таблицы</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if 'billing' in segment %} active bg-gradient-primary {% endif %}" href="/billing.html" style="color: black;">
+          <div class="text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons text-black opacity-10">receipt_long</i>
+          </div>
+          <span class="nav-link-text ms-1">Задачи</span>
+        </a>
+      </li>
+        <li class="nav-item">
+            <a class="nav-link {% if 'map' in segment %} active bg-gradient-primary {% endif %}" href="/map.html" style="color: black;">
+                <div class="text-center me-2 d-flex align-items-center justify-content-center">
+                  <i class="material-icons text-black opacity-10">map</i>
+                </div>
+                <span class="nav-link-text ms-1">Карта</span>
+            </a>
+        </li>
+      <li class="nav-item">
+        <a class="nav-link {% if 'calendar' in segment %} active bg-gradient-primary {% endif %}" href="/calendar.html" style="color: black;">
+          <div class="text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons text-black opacity-10">event</i>
+          </div>
+          <span class="nav-link-text ms-1">Календарь</span>
+        </a>
+      </li>   
+      <li class="nav-item mt-3">
+        <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-8">Страница пользователя</h6>
+      </li>
+      <!-- Отображение имени пользователя и роли "admin", если есть -->
+      <li class="nav-item">
+        <a class="nav-link {% if 'profile' in segment %} active bg-gradient-primary {% endif %}" href="/profile" style="color: black;">
+            <div class="text-center me-2 d-flex align-items-center justify-content-center">
+                <i class="material-icons text-black opacity-10">person</i>
+            </div>
+            <span class="nav-link-text ms-1" id="user-username"></span><span class="nav-link-text ms-1" id="user-role"></span>
+            <span class="nav-link-text ms-1">
+                {% if username %}{{ username }}
+                {% if role == 'Администратор' %} | admin{% endif %}{% endif %}
+            </span>
+        </a>
+    </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('authentication_blueprint.logout') }}" style="color: black;">
+          <div class="text-center me-2 d-flex align-items-center justify-content-center">
+            <i class="material-icons text-black opacity-10">directions_run</i>
+          </div>
+          <span class="nav-link-text ms-1">Выход</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</aside>

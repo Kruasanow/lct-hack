@@ -1,0 +1,308 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Агентские точки {% endblock %}
+
+{% block stylesheets %}
+<style>
+  .position-fixed {
+    top: 1rem;
+    right: 1rem;
+  }
+    .limited-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 5px; /* Измените это значение на ваше усмотрение */
+      cursor: pointer;}
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white ps-3">Агентские точки</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">ID</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Адрес</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Когда подключена <br>точка</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Доставлены ли <br>материалы</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">
+                    Кол-во дней после<br>выдачи последней карты
+                  </th>                  
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Кол-во одобренных <br>заявок</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Кол-во выданных<br>карт</th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for point in points %}
+                  <tr>
+                    <td contenteditable="false" data-name="id" style="text-align: left; padding-left: 23px;">{{ point.id }}</td>
+                  <td class="limited-text" contenteditable="false" data-name="address">{{ point.address_text }}</td>
+                  <td contenteditable="false" data-name="connected">{{ point.connected }}</td>
+                  <td contenteditable="false" data-name="delivered">{{ point.delivered_text }}</td>
+                  <td contenteditable="false" data-name="days_last_card">{{ point.days_last_card }}</td>
+                  <td contenteditable="false" data-name="num_approved_app">{{ point.num_approved_app }}</td>
+                  <td contenteditable="false" data-name="num_card">{{ point.num_card }}</td>
+                  <td class="align-middle">
+                    <a href="javascript:;" class="text-warning font-weight-bold text-xs bg-button edit-button" data-username="{{ point.id }}" data-toggle="tooltip" data-original-title="Изменить">
+                      Изменить
+                    </a>
+                    <a href="javascript:;" class="text-danger font-weight-bold text-xs bg-button delete-button" style="text-align: left; padding-left: 23px;" data-username="{{ point.id }}" data-toggle="tooltip" data-original-title="Удалить">
+                      Удалить
+                    </a>
+                    <a href="javascript:;" class="text-success font-weight-bold text-xs bg-button save-button ms-4" data-username="{{ point.id }}" data-toggle="tooltip" data-original-title="Сохранить">
+                      Сохранить
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="#" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#addRowModal" style="background-color: #ff4b5f; color: white">
+    Добавить строку
+  </a>
+  <div id="addRowModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="addRowForm">
+                    <label for="newAddress">Адрес:</label>
+                    <input type="text" id="newAddress" name="newAddress" class="form-control" required>
+                    <label for="newConnected">Когда подключена точка:</label>
+                    <input type="text" id="newConnected" name="newConnected" class="form-control" required>
+                    <label for="newDelivered">Доставлены ли материалы:</label>
+                    <select id="newDelivered" name="newDelivered" class="form-control" required>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                    <label for="newDaysLastCard">Кол-во дней после выдачи последней карты:</label>
+                    <input type="text" id="newDaysLastCard" name="newDaysLastCard" class="form-control" required>
+                    <label for="newNumApprovedApp">Кол-во одобренных заявок:</label>
+                    <input type="text" id="newNumApprovedApp" name="newNumApprovedApp" class="form-control" required>
+                    <label for="newNumCard">Кол-во выданных карт:</label>
+                    <input type="text" id="newNumCard" name="newNumCard" class="form-control" required>
+
+                    <button type="submit" class="btn btn-primary mt-3" style="background-color: #ff4b5f; color: white">Добавить</button>
+                  </form>
+                </div>
+            </div>
+        </div>
+      </div>
+  <div class="position-fixed bottom-1 end-1 z-index-2">
+    <div class="toast fade hide p-2 mt-2 bg-white" role="alert" aria-live="assertive" id="customToast" aria-atomic="true">
+        <div class="toast-header border-0">
+            <i class="material-icons text-danger me-2"></i>
+            <span class="me-auto text-gradient text-danger font-weight-bold">Уведомление</span>
+            <small class="text-body" id="toastTimestamp"></small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+        </div>
+        <hr class="horizontal dark m-0">
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script>
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const numericInputs = document.querySelectorAll('input[type="text"]:not(#newAddress):not(#newConnected):not(#newDaysLastCard)');
+
+    numericInputs.forEach(input => {
+        input.addEventListener('input', function () {
+            const inputValue = input.value.trim();
+            const validationResult = document.getElementById('validationResult');
+
+            if (isNaN(inputValue)) {
+                // Показать сообщение об ошибке, если введенное значение не является числом
+                showToast('danger', 'Введите числовое значение в последние 3 поля');
+            } else {
+                validationResult.innerText = '';
+            }
+        });
+    });
+});
+
+
+
+
+
+  document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('edit-button')) {
+        const editButton = event.target;
+        const row = editButton.closest('tr');
+
+        row.querySelectorAll('[contenteditable="false"]').forEach(cell => {
+            const dataName = cell.getAttribute('data-name');
+            if (dataName !== 'id') {
+                cell.contentEditable = 'true';
+            }
+        });
+    } else if (event.target.classList.contains('delete-button')) {
+        const id = event.target.getAttribute('data-username');
+        const row = event.target.closest('tr');
+
+        fetch(`/delete_points/${id}`, {
+            method: 'POST',
+        })
+        .then(response => {
+          if (response.status === 200) {
+
+            row.remove(); 
+            showToast('success', 'Строка успешно удалена');
+        } else {
+            showToast('danger', 'Произошла ошибка при удалении строки');
+        }
+        });
+    }
+});
+
+
+  document.addEventListener('click', function (event) {
+        if (event.target.classList.contains('save-button')) {
+          const username = event.target.getAttribute('data-username');
+          const row = event.target.closest('tr');
+          // Получите данные, которые нужно сохранить, из ряда
+          const id = row.querySelector('[data-name="id"]').textContent;
+          const updatedaddress = row.querySelector('[data-name="address"]').textContent;
+          const updatedconnected = row.querySelector('[data-name="connected"]').textContent;
+          const updateddelivered = row.querySelector('[data-name="delivered"]').textContent;
+          const updateddays_last_card = row.querySelector('[data-name="days_last_card"]').textContent;
+          const updatednum_approved_app = row.querySelector('[data-name="num_approved_app"]').textContent;
+          const updatednum_card = row.querySelector('[data-name="num_card"]').textContent;
+
+          const data = {
+            id: id,
+            address: updatedaddress,
+            connected: updatedconnected,
+            delivered: updateddelivered,
+            days_last_card: updateddays_last_card,
+            num_approved_app: updatednum_approved_app,
+            num_card: updatednum_card
+
+          };
+
+        console.log(data)
+
+        fetch(`/update_points/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.status === 200) {
+                showToast('success', 'Данные успешно сохранены');
+            } else {
+                showToast('danger','Произошла ошибка при сохранении данных');
+            }
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+  const addRowForm = document.getElementById('addRowForm');
+
+  addRowForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+          const updatedaddress =  document.getElementById('newAddress').value;
+          const updatedconnected =  document.getElementById('newConnected').value;
+          const updateddelivered =  document.getElementById('newDelivered').value;
+          const updateddays_last_card =  document.getElementById('newDaysLastCard').value;
+          const updatednum_approved_app =  document.getElementById('newNumApprovedApp').value;
+          const updatednum_card =  document.getElementById('newNumCard').value;
+          
+          const data = {
+            address: updatedaddress,
+            connected: updatedconnected,
+            delivered: updateddelivered,
+            days_last_card: updateddays_last_card,
+            num_approved_app: updatednum_approved_app,
+            num_card: updatednum_card
+          };
+
+      fetch('/add_points', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+          if (result.success) {
+              const addRowModal = new bootstrap.Modal(document.getElementById('addRowModal'));
+              addRowModal.hide();
+              addRowForm.reset();
+
+              // Скрыть поле ввода новой строки
+              addRowForm.style.display = 'none';
+
+              // Дополнительные действия по обновлению данных на странице, если необходимо
+
+              showToast('success', 'Сотрудник успешно добавлен');
+
+              location.reload();
+              showToast('success', 'Страница успешно перезагружена');
+          } else {
+              showToast('danger', 'Произошла ошибка при добавлении сотрудника: ' + result.msg);
+          }
+      });
+  });
+});
+document.addEventListener('DOMContentLoaded', function () {
+  // Обработчик события для отображения полного текста при наведении
+  document.querySelectorAll('.limited-text').forEach(function (cell) {
+    cell.addEventListener('mouseover', function () {
+      this.style.whiteSpace = 'normal';
+      this.style.overflow = 'visible';
+      this.style.maxWidth = 'none';
+    });
+
+    cell.addEventListener('mouseout', function () {
+      this.style.whiteSpace = 'nowrap';
+      this.style.overflow = 'hidden';
+      this.style.textOverflow = 'ellipsis';
+      this.style.maxWidth = '150px'; // Измените это значение на ваше усмотрение
+    });
+  });
+});
+function showToast(type, message) {
+  const toast = document.getElementById('customToast');
+  toast.querySelector('.toast-body').innerHTML = message;
+  const timestamp = new Date().toLocaleTimeString();
+  toast.querySelector('#toastTimestamp').innerText = timestamp;
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+}
+const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    setTimeout(() => {
+        bsToast.hide();
+    }, 5000);
+</script>
+
+{% endblock javascripts %}

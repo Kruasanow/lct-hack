@@ -1,0 +1,233 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Сотрудники {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+.position-fixed {
+  top: 1rem;
+  right: 1rem;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Сотрудники</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">№</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">ФИО</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Местоположение</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Уровень</th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for worker in workers %}
+                <tr>
+                  <td contenteditable="false" data-name="id" style="text-align: left; padding-left: 23px;">{{ worker.id }}</td>
+                  <td contenteditable="false" data-name="FIO">{{ worker.FIO }}</td>
+                  <td contenteditable="false" data-name="location">{{ worker.location_text }}</td>
+                  <td contenteditable="false" data-name="grade">{{ worker.grade }}</td>
+
+                  <td class="align-middle">
+                    <a href="javascript:;" class="text-warning font-weight-bold text-xs bg-button edit-button" data-username="{{ worker.id }}" data-toggle="tooltip" data-original-title="Изменить">
+                      Изменить
+                    </a>
+                    <a href="javascript:;" class="text-danger font-weight-bold text-xs bg-button delete-button" style="text-align: left; padding-left: 23px;" data-username="{{ worker.id }}" data-toggle="tooltip" data-original-title="Удалить">
+                      Удалить
+                    </a>
+                    <a href="javascript:;" class="text-success font-weight-bold text-xs bg-button save-button ms-4" data-username="{{ worker.id }}" data-toggle="tooltip" data-original-title="Сохранить">
+                      Сохранить
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a href="#" class="btn btn-primary mb-1" data-bs-toggle="modal" data-bs-target="#addRowModal" style="background-color: #ff4b5f; color: white">
+    Добавить строку
+  </a>
+  <div id="addRowModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="addRowForm">
+                    <label for="newFIO">ФИО:</label>
+                    <input type="text" id="newFIO" name="newFIO" class="form-control" required>
+                    <label for="newLocation">Местоположение:</label>
+                    <input type="text" id="newLocation" name="newLocation" class="form-control" required>
+                    <label for="newGrade">Уровень:</label>
+                    <select id="newGrade" name="newGrade" class="form-control" required>
+                        <option value="Синьор">Синьор</option>
+                        <option value="Мидл">Мидл</option>
+                        <option value="Джун">Джун</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary mt-3" style="background-color: #ff4b5f; color: white">Добавить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="position-fixed bottom-1 end-1 z-index-2">
+    <div class="toast fade hide p-2 mt-2 bg-white" role="alert" aria-live="assertive" id="customToast" aria-atomic="true">
+        <div class="toast-header border-0">
+            <i class="material-icons text-danger me-2"></i>
+            <span class="me-auto text-gradient text-danger font-weight-bold">Уведомление</span>
+            <small class="text-body" id="toastTimestamp"></small>
+            <i class="fas fa-times text-md ms-3 cursor-pointer" data-bs-dismiss="toast" aria-label="Close"></i>
+        </div>
+        <hr class="horizontal dark m-0">
+        <div class="toast-body">
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block javascripts %}
+<script>
+  document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('edit-button')) {
+        const editButton = event.target;
+        const row = editButton.closest('tr');
+
+        row.querySelectorAll('[contenteditable="false"]').forEach(cell => {
+            const dataName = cell.getAttribute('data-name');
+            if (dataName !== 'id') {
+                cell.contentEditable = 'true';
+            }
+        });
+    } else if (event.target.classList.contains('delete-button')) {
+        const id = event.target.getAttribute('data-username');
+        const row = event.target.closest('tr');
+
+        fetch(`/delete_worker/${id}`, {
+            method: 'POST',
+        })
+        .then(response => {
+          if (response.status === 200) {
+
+            row.remove(); 
+            showToast('success', 'Сотрудник успешно удален');
+        } else {
+            showToast('danger', 'Произошла ошибка при удалении сотрудника');
+        }
+        });
+    }
+});
+
+
+document.addEventListener('click', function (event) {
+  if (event.target.classList.contains('save-button')) {
+    const username = event.target.getAttribute('data-username');
+    const row = event.target.closest('tr');
+    const id = row.querySelector('[data-name="id"]').textContent;
+    const updatedFIO = row.querySelector('[data-name="FIO"]').textContent;
+    const updatedLocation = row.querySelector('[data-name="location"]').textContent;
+    const updatedGrade = row.querySelector('[data-name="grade"]').textContent;
+
+    const data = {
+      id: id,
+      FIO: updatedFIO,
+      location: updatedLocation,
+      grade: updatedGrade
+    };
+
+  console.log(data)
+
+  fetch(`/update_worker/${id}`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+  })
+  .then(response => {
+      if (response.status === 200) {
+          showToast('success', 'Данные успешно сохранены');
+      } else {
+          showToast('danger','Произошла ошибка при сохранении данных, такой пользователь уже сущестует');
+      }
+  });
+}
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const addRowForm = document.getElementById('addRowForm');
+
+  addRowForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const newFIO = document.getElementById('newFIO').value;
+      const newLocation = document.getElementById('newLocation').value;
+      const newGrade = document.getElementById('newGrade').value;
+
+      const data = {
+          fio: newFIO,
+          location: newLocation,
+          grade: newGrade
+      };
+
+      fetch('/add_workers', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+          if (result.success) {
+              const addRowModal = new bootstrap.Modal(document.getElementById('addRowModal'));
+              addRowModal.hide();
+              addRowForm.reset();
+              addRowForm.style.display = 'none';
+              showToast('success', 'Сотрудник успешно добавлен');
+              location.reload();
+              showToast('success', 'Страница успешно перезагружена');
+          } else {
+              showToast('danger', 'Произошла ошибка при добавлении сотрудника: ' + result.msg);
+          }
+      });
+  });
+});
+
+function showToast(type, message) {
+  const toast = document.getElementById('customToast');
+  toast.querySelector('.toast-body').innerHTML = message;
+  const timestamp = new Date().toLocaleTimeString();
+  toast.querySelector('#toastTimestamp').innerText = timestamp;
+  const bsToast = new bootstrap.Toast(toast);
+  bsToast.show();
+}
+const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    setTimeout(() => {
+        bsToast.hide();
+    }, 5000);
+</script>
+
+{% endblock javascripts %}

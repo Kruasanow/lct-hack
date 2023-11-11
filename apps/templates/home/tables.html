@@ -1,0 +1,275 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Tables {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+.limited-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 10px; /* Измените это значение на ваше усмотрение */
+  cursor: pointer;}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+  <div class="row">
+    <!-- Первая колонка (пользователи) -->
+    <div class="col-md-6">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-success border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Пользователи</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">Имя пользователя</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Роль</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Пароль</th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                  <tr>
+                    <td style="text-align: left; padding-left: 23px;">{{ user.username }}</td>
+                    <td style="padding-right: 20px;">{{ user.role }}</td>
+                    <td style="padding-right: 20px;">****</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <a href="{{ url_for('home_blueprint.route_template', template='users.html') }}" class="btn btn-success"
+               style="background-color: #ff4b5f; color: white;margin-top:20px; margin-right: 20px; float: right;">
+               Перейти к таблице
+            </a>
+            <div id="message"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Вторая колонка (сотрудники) -->
+    <div class="col-md-6">
+      <div class="card my-4">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+            <h6 class="text-white text-capitalize ps-3">Сотрудники</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">ФИО</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Местоположение</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Уровень</th>
+                  <th class="text-secondary opacity-7"></th>
+                  <th class="text-secondary opacity-7"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for worker in workers %}
+                  <tr>
+                    <td style="text-align: left; padding-left: 23px;">{{ worker.FIO }}</td>
+                    <td  class="limited-text" style="padding-right: 20px;">{{ worker.location_text }}</td>
+                    <td style="padding-right: 20px;">{{ worker.grade }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <a href="{{ url_for('home_blueprint.route_template', template='workers.html') }}" class="btn btn-info"
+               style="background-color: #ff4b5f; color: white; margin-top:20px; margin-right: 20px; float: right;">
+               Перейти к таблице
+            </a>
+            <div id="message"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-primary shadow-success border-radius-lg pt-4 pb-3">
+            <h6 class="text-white ps-3">Агентские точки</h6>
+          </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" style="text-align: left;">Адрес</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Когда подключена <br>точка</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Доставлены ли <br>материалы</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Кол-во дней после <br>выдачи последней карты</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Кол-во одобренных <br>заявок</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2" style="text-align: left;">Кол-во выданных<br> карт</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for point in points %}
+                  <tr>
+                    <td class="limited-text" style="text-align: left; padding-left: 23px;">{{ point.address_text }}</td>
+                  <td style="padding-right: 20px;">{{ point.connected }}</td>
+                  <td style="padding-right: 20px;">{{ point.delivered_text }}</td>
+                   <td style="padding-right: 20px;">{{ point.days_last_card }}</td>
+                  <td style="padding-right: 20px;">{{ point.num_approved_app }}</td>
+                  <td style="padding-right: 20px;">{{ point.num_card }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <a href="{{ url_for('home_blueprint.route_template', template='points.html') }}" class="btn btn-primary"
+               style="background-color: #ff4b5f; color: white; margin-top:20px; margin-right: 20px; float: right;">
+               Перейти к таблице
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Обработчик события для отображения полного текста при наведении
+    document.querySelectorAll('.limited-text').forEach(function (cell) {
+      cell.addEventListener('mouseover', function () {
+        this.style.whiteSpace = 'normal';
+        this.style.overflow = 'visible';
+        this.style.maxWidth = 'none';
+      });
+  
+      cell.addEventListener('mouseout', function () {
+        this.style.whiteSpace = 'nowrap';
+        this.style.overflow = 'hidden';
+        this.style.textOverflow = 'ellipsis';
+        this.style.maxWidth = '150px'; // Измените это значение на ваше усмотрение
+      });
+    });
+  });
+
+
+  document.addEventListener('click', function (event) {
+    if (event.target.id === 'add-button') {
+      // Обработка нажатия на кнопку "Добавить"
+      // Здесь вы можете выполнить необходимые действия, такие как добавление новой строки в таблицу
+    }
+  });
+  document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('edit-button')) {
+      const editButton = event.target;
+      const saveButton = editButton.nextElementSibling;
+      const row = editButton.closest('tr');
+      
+      // Проверка, если поле редактируется, то не менять его
+      const contentEditableCells = row.querySelectorAll('[contenteditable="true"]');
+      if (contentEditableCells.length === 0) {
+        row.querySelectorAll('[contenteditable="false"]').forEach(cell => {
+          cell.contentEditable = 'true';
+        });
+      }
+      
+      // Переключите видимость кнопок
+      editButton.style.display = 'none';
+      saveButton.style.display = 'inline';
+    } else if (event.target.classList.contains('save-button')) {
+      const saveButton = event.target;
+      const editButton = saveButton.previousElementSibling;
+      const row = saveButton.closest('tr');
+      
+      // Переключите contenteditable обратно на false
+      row.querySelectorAll('[contenteditable="true"]').forEach(cell => {
+        cell.contentEditable = 'false';
+      });
+      
+      // Здесь вы можете получить новые значения из ячеек с contenteditable="true" и отправить их на сервер
+      const updatedData = {};
+      row.querySelectorAll('[contenteditable="true"]').forEach(cell => {
+        const fieldName = cell.dataset.name;
+        const value = cell.innerText;
+        updatedData[fieldName] = value;
+      });
+  
+      // Отправьте данные на сервер
+      fetch('/update_worker/' + workerId, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Обработка успешного обновления данных
+        console.log('Данные успешно обновлены:', data);
+      
+        // Добавьте `console.log` с выводом "1"
+        console.log('1');
+      })
+      .catch(error => {
+        // Обработка ошибок
+        console.error('Ошибка при обновлении данных:', error);
+      });
+      
+      .then(response => response.json())
+      .then(data => {
+        // Данные успешно обновлены, можно выполнить какие-либо действия
+        console.log('Данные успешно обновлены:', data);
+      })
+      .catch(error => {
+        // Обработка ошибок
+        console.error('Ошибка при обновлении данных:', error);
+      });
+      saveButton.style.display = 'none';
+editButton.style.display = 'inline';
+
+// Вставьте сообщение в элемент "message"
+const messageElement = document.getElementById('message');
+messageElement.innerHTML = 'Данные успешно обновлены';
+
+// Очистите сообщение через некоторое время, например, через 3 секунды
+setTimeout(() => {
+  messageElement.innerHTML = '';
+}, 3000);
+  });
+  
+
+</script>
+
+
+
+
+{% endblock javascripts %}
