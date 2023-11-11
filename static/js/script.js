@@ -5,6 +5,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const enteredValues = new Set(); // Множество для хранения введенных значений
 
     var resArr = []; // Создаем пустой массив для сохранения результатов
+    var schetchik_ebla = 0
+
+    function isEven(number) {
+        return number % 2 === 0;
+    }
+
+    function highlightButton(button, condition) {
+        if (condition) {
+            button.style.backgroundColor = 'green';
+        } else {
+            button.style.backgroundColor = 'red';
+        }
+    }
 
     // Функция для обновления значения в скрытом поле формы
     function updateHiddenInput() {
@@ -77,5 +90,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         updateHiddenInput();
     });
+
+    addValueButton2.addEventListener('click', () => {
+        if (isEven(schetchik_ebla)) {
+            resArr.push('(');
+            highlightButton(addValueButton2, true);
+        } else {
+            resArr.push(')');
+            console.log(resArr);
+            highlightButton(addValueButton2, false);
+        }
+        schetchik_ebla++;
+
+        updateHiddenInput();
+    });
+
     updateHiddenInput();
 });

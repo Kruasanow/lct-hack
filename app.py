@@ -3,7 +3,15 @@ import json
 
 app = Flask(__name__)
 
+def transform_str(resArr):
+    if '| )' in resArr:
+        resArr = resArr.replace(' | )', ') | ')
+    if '& )' in resArr:
+        resArr = resArr.replace(' & )', ') & ')
+    return resArr
+
 def res_arr_form_maker(resArr):
+    # print(resArr)
     res_string = ''
     try:
         for i in resArr:
@@ -13,12 +21,16 @@ def res_arr_form_maker(resArr):
             elif '&' in i:
                 i = i.replace(' &','')
                 res_string += f"({i}) & "
+            elif '(' in i:
+                res_string+='('
+            elif ')' in i:
+                res_string+=')'
             else:
                 print('ne I ne & ne srabotalo')
         # print(res_string[:-2])
     except Exception:
         pass
-    return res_string[:-2]
+    return transform_str(res_string[:-2])
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -36,7 +48,7 @@ def index():
         else:
             resArr = []
         entered_values.extend([task_name, priority, res_arr_form_maker(resArr),  selected_levels])
-        
+        print(entered_values)
     return render_template('index.html', entered_values=entered_values)
 
 if __name__ == '__main__':

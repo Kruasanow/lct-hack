@@ -40,10 +40,13 @@
             <div class="row">
                 <div class="large">
                     <div class="left-small">
-                        <span class="add-button" id="addValueButton">«И»</span>
+                        <span class="add-button" id="addValueButton2">Объединение</span>
                     </div>
                     <div class="left-small">
-                        <span class="add-button" id="addValueButton1">«ИЛИ»</span>
+                        <span class="add-button" id="addValueButton">Логическое |</span>
+                    </div>
+                    <div class="left-small">
+                        <span class="add-button" id="addValueButton1">Логическое & </span>
                     </div>
                     <div class="small">
                         <label for="InputedData">Вводимые данные:</label>
@@ -73,7 +76,8 @@
                         <input type="text" id="curvalue" name="curvalue">
                     </div>
                 </div>
-            </div>         
+            </div>        
+            <input type="hidden" id="resArr" name="resArr" value=""> 
             <input type="submit" value="Отправить" class="red-button">
             <div class="row">
                 <div class="output-container" id="outputValues" name="data">
@@ -82,5 +86,6 @@
             </div>
         </div>
     </form>
+    <!-- {{entered_values}} -->
 </body>
 </html>
